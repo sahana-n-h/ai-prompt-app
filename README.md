@@ -12,8 +12,11 @@ A lightweight AI chat interface built with React and Vite. Users can ask travel-
 - Keyboard shortcut: Cmd/Ctrl + Enter to submit
 - OpenAI GPT-4o-mini integration
 - Animated typing indicator while the AI is responding
-- Chat history — all prompts and responses in a scrollable thread (session only; not persisted across page refreshes)
-- Clear History button to reset the conversation
+- Chat history — all prompts and responses in a scrollable thread, **persisted to localStorage** across page refreshes
+- Persistent conversation sidebar — slide-over panel listing all saved conversations, with relative timestamps and message counts
+- Load any previous conversation to resume where you left off
+- Delete individual conversations or start a fresh chat at any time
+- Clear History button to reset the current conversation
 - Error handling for invalid API keys, rate limits, and network failures
 - Loading states on the submit button and message thread
 - Responsive dark UI
@@ -71,17 +74,20 @@ Open http://localhost:5173 in your browser.
 ```
 src/
 ├── components/
-│   ├── Header.jsx          # Top navigation bar
-│   ├── PromptInput.jsx     # Textarea, Send button, Clear History button
-│   ├── ChatHistory.jsx     # Scrollable message thread
-│   ├── ChatMessage.jsx     # Individual message bubble (user / AI / error)
-│   ├── TypingIndicator.jsx # Animated dots while AI responds
-│   └── EmptyState.jsx      # Welcome screen with example prompts
+│   ├── Header.jsx                 # Top navigation bar with history toggle button
+│   ├── PromptInput.jsx            # Textarea, Send button, Clear History button
+│   ├── ChatHistory.jsx            # Scrollable message thread
+│   ├── ChatMessage.jsx            # Individual message bubble (user / AI / error)
+│   ├── TypingIndicator.jsx        # Animated dots while AI responds
+│   ├── EmptyState.jsx             # Welcome screen with example prompts
+│   └── ConversationHistoryPanel.jsx # Slide-over sidebar for saved conversations
+├── hooks/
+│   └── useConversations.js        # localStorage-backed conversation persistence hook
 ├── services/
-│   └── openai.js           # Axios wrapper for OpenAI API with error handling
-├── App.jsx                 # Root component, state management
-├── main.jsx                # React DOM entry point
-└── index.css               # Tailwind CSS imports and custom utilities
+│   └── openai.js                  # Axios wrapper for OpenAI API with error handling
+├── App.jsx                        # Root component, state management
+├── main.jsx                       # React DOM entry point
+└── index.css                      # Tailwind CSS imports and custom utilities
 ```
 
 ---

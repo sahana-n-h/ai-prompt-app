@@ -37,6 +37,9 @@ export function useConversations() {
       ? userMsg.content.slice(0, 60) + (userMsg.content.length > 60 ? '…' : '')
       : 'Untitled conversation';
 
+    // Generate the id once so it's consistent between the stored object and the return value
+    const newId = existingId ?? `conv_${Date.now()}`;
+
     setConversations((prev) => {
       let updated;
       if (existingId) {
@@ -45,7 +48,7 @@ export function useConversations() {
         );
       } else {
         const newConversation = {
-          id: `conv_${Date.now()}`,
+          id: newId,
           title,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -57,7 +60,7 @@ export function useConversations() {
       return updated;
     });
 
-    return existingId ?? `conv_${Date.now()}`;
+    return newId;
   }, []);
 
   /** Delete a conversation by id. */

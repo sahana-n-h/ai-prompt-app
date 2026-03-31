@@ -4,6 +4,8 @@ A lightweight AI chat interface built with React and Vite. Users can ask travel-
 
 ![Spotnana Travel Assistant screenshot](src/assets/screenshot.png)
 
+![Chat history](src/assets/chatHistory.png)
+
 ---
 
 ## Features
@@ -15,11 +17,9 @@ A lightweight AI chat interface built with React and Vite. Users can ask travel-
 - Chat history — all prompts and responses in a scrollable thread, **persisted to localStorage** across page refreshes
 - Persistent conversation sidebar — slide-over panel listing all saved conversations, with relative timestamps and message counts
 - Load any previous conversation to resume where you left off
-- Delete individual conversations or start a fresh chat at any time
-- Clear History button to reset the current conversation
+- Delete individual conversations, start a fresh chat, or clear all history at any time
 - Error handling for invalid API keys, rate limits, and network failures
 - Loading states on the submit button and message thread
-- Responsive dark UI
 
 ---
 
@@ -57,7 +57,7 @@ Open `.env` and add your key:
 OPENAI_API_KEY=sk-...your-key-here...
 ```
 
-> `.env` file is listed in `.gitignore` by default.
+> `.env` is listed in `.gitignore` by default.
 
 ### 4. Start the development server
 
@@ -74,20 +74,20 @@ Open http://localhost:5173 in your browser.
 ```
 src/
 ├── components/
-│   ├── Header.jsx                 # Top navigation bar with history toggle button
-│   ├── PromptInput.jsx            # Textarea, Send button, Clear History button
-│   ├── ChatHistory.jsx            # Scrollable message thread
-│   ├── ChatMessage.jsx            # Individual message bubble (user / AI / error)
-│   ├── TypingIndicator.jsx        # Animated dots while AI responds
-│   ├── EmptyState.jsx             # Welcome screen with example prompts
-│   └── ConversationHistoryPanel.jsx # Slide-over sidebar for saved conversations
+│   ├── Header.jsx
+│   ├── PromptInput.jsx
+│   ├── ChatHistory.jsx
+│   ├── ChatMessage.jsx
+│   ├── TypingIndicator.jsx
+│   ├── EmptyState.jsx
+│   └── ConversationHistoryPanel.jsx
 ├── hooks/
-│   └── useConversations.js        # localStorage-backed conversation persistence hook
+│   └── useConversations.js
 ├── services/
-│   └── openai.js                  # Axios wrapper for OpenAI API with error handling
-├── App.jsx                        # Root component, state management
-├── main.jsx                       # React DOM entry point
-└── index.css                      # Tailwind CSS imports and custom utilities
+│   └── openai.js
+├── App.jsx
+├── main.jsx
+└── index.css
 ```
 
 ---
@@ -110,7 +110,7 @@ src/
 npm run build
 ```
 
-The optimized output will be in the `dist/` folder. Preview it with:
+Preview the output with:
 
 ```bash
 npm run preview

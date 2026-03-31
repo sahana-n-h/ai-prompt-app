@@ -1,11 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 
-// Textarea input with submit and clear actions
-export default function PromptInput({ onSubmit, onClear, isLoading, hasHistory }) {
+export default function PromptInput({ onSubmit, isLoading }) {
   const [prompt, setPrompt] = useState('');
   const textareaRef = useRef(null);
 
-  // Auto-resize as user types
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
@@ -48,17 +46,6 @@ export default function PromptInput({ onSubmit, onClear, isLoading, hasHistory }
           </span>
 
           <div className="flex items-center gap-2">
-            {hasHistory && (
-              <button
-                type="button"
-                onClick={onClear}
-                disabled={isLoading}
-                className="rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors duration-150 disabled:opacity-40 disabled:cursor-not-allowed hover:border-red-400 hover:text-red-500"
-                style={{borderColor: '#E0E3E5', color: '#717273'}}
-              >
-                Clear History
-              </button>
-            )}
             <button
               type="submit"
               disabled={!prompt.trim() || isLoading}

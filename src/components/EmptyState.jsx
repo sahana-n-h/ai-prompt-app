@@ -1,5 +1,5 @@
 // Empty state shown before any messages are sent
-export default function EmptyState() {
+export default function EmptyState({ onSuggestion }) {
   const suggestions = [
     'What are the best business travel tips for long-haul flights?',
     'How do I manage a corporate travel policy effectively?',
@@ -26,15 +26,17 @@ export default function EmptyState() {
       {/* Suggestion chips */}
       <div className="flex flex-wrap justify-center gap-2 max-w-lg">
         {suggestions.map((s) => (
-          <span
+          <button
             key={s}
-            className="cursor-default rounded-full border px-3 py-1.5 text-xs transition-colors select-none"
+            type="button"
+            onClick={() => onSuggestion?.(s)}
+            className="rounded-full border px-3 py-1.5 text-xs transition-colors"
             style={{borderColor: '#E0E3E5', backgroundColor: '#ffffff', color: '#717273'}}
             onMouseEnter={e => { e.currentTarget.style.borderColor='#CB333B'; e.currentTarget.style.color='#CB333B'; }}
             onMouseLeave={e => { e.currentTarget.style.borderColor='#E0E3E5'; e.currentTarget.style.color='#717273'; }}
           >
             {s}
-          </span>
+          </button>
         ))}
       </div>
     </div>

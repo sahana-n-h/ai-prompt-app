@@ -1,14 +1,5 @@
-/**
- * Slide-over sidebar showing all saved conversations.
- * Props:
- *   isOpen: boolean
- *   onClose: () => void
- *   conversations: Conversation[]
- *   activeId: string | null
- *   onLoad: (conversation) => void
- *   onDelete: (id) => void
- *   onNewChat: () => void
- */
+import { useState } from 'react';
+
 export default function ConversationHistoryPanel({
   isOpen,
   onClose,
@@ -17,7 +8,9 @@ export default function ConversationHistoryPanel({
   onLoad,
   onDelete,
   onNewChat,
+  onClearAll,
 }) {
+  const [confirmingClear, setConfirmingClear] = useState(false);
   function formatDate(iso) {
     const d = new Date(iso);
     const now = new Date();
@@ -40,7 +33,7 @@ export default function ConversationHistoryPanel({
       {isOpen && (
         <div
           className="fixed inset-0 z-20 bg-black/20 backdrop-blur-[1px] transition-opacity"
-          onClick={onClose}
+          onClick={() => { setConfirmingClear(false); onClose(); }}
           aria-hidden="true"
         />
       )}
@@ -78,7 +71,7 @@ export default function ConversationHistoryPanel({
             </h2>
           </div>
           <button
-            onClick={onClose}
+            onClick={() => { setConfirmingClear(false); onClose(); }}
             className="rounded-md p-1.5 text-sm transition-colors hover:bg-gray-100"
             style={{ color: '#717273' }}
             aria-label="Close history panel"
@@ -213,9 +206,64 @@ export default function ConversationHistoryPanel({
         {/* Footer */}
         {conversations.length > 0 && (
           <div className="border-t px-4 py-3" style={{ borderColor: '#E0E3E5' }}>
-            <p className="text-[10px] text-center" style={{ color: '#717273' }}>
-              {conversations.length} saved conversation{conversations.length !== 1 ? 's' : ''} · stored locally
-            </p>
+            {confirmingClear ? (
+              /* ── Confirmation state ── */
+              <div className="flex flex-col gap-2">
+                <p className="text-[11px] text-center font-medium" style={{ color: '#202020' }}>
+                  Delete all {conversations.length} conversation{conversations.length !== 1 ? 's' : ''}?
+                </p>
+                <p className="text-[10px] text-center" style={{ color: '#717273' }}>
+                  This cannot be undone.
+                </p>
+                <div className="flex gap-2 mt-1">
+                  <button
+                    onClick={() => setConfirmingClear(false)}
+                    className="flex-1 rounded-lg border py-1.5 text-xs font-medium transition-colors hover:bg-gray-50"
+                    style={{ borderColor: '#E0E3E5', color: '#717273' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => { onClearAll(); setConfirmingClear(false); onClose(); }}
+                    className="flex-1 rounded-lg py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90"
+                    style={{ backgroundColor: '#CB333B' }}
+                  >
+                    Delete all
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* ── Default state ── */
+              <div className="flex flex-col gap-1.5">
+                <p className="text-[10px] text-center" style={{ color: '#717273' }}>
+                  {conversations.length} saved conversation{conversations.length !== 1 ? 's' : ''} · stored locally
+                </p>
+                <button
+                  onClick={() => setConfirmingClear(true)}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-[11px] font-medium transition-colors hover:bg-red-50"
+                  style={{ color: '#717273' }}
+                  onMouseEnter={e => e.currentTarget.style.color = '#CB333B'}
+                  onMouseLeave={e => e.currentTarget.style.color = '#717273'}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3.5 w-3.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                    <path d="M10 11v6M14 11v6" />
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                  </svg>
+                  Clear all history
+                </button>
+              </div>
+            )}
           </div>
         )}
       </aside>

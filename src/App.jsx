@@ -24,59 +24,66 @@ export default function App() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [activeConvId, setActiveConvId] = useState(null);
 
-  const { conversations, saveConversation, deleteConversation } = useConversations();
+  const { conversations, saveConversation, deleteConversation, clearAll } = useConversations();
 
-  // Track the latest messages in a ref so the save-on-blur logic can access them
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
+  const activeConvIdRef = useRef(activeConvId);
+  activeConvIdRef.current = activeConvId;
 
   const handleSubmit = useCallback(async (prompt) => {
     const userMsg = createMessage('user', prompt);
-    setMessages((prev) => {
-      const updated = [...prev, userMsg];
-      messagesRef.current = updated;
-      return updated;
-    });
+    const nextMessages = [...messagesRef.current, userMsg];
+    messagesRef.current = nextMessages;
+    setMessages(nextMessages);
     setIsLoading(true);
 
     try {
       const responseText = await fetchAIResponse(prompt, API_KEY);
       const aiMsg = createMessage('assistant', responseText);
-      setMessages((prev) => {
-        const updated = [...prev, aiMsg];
-        messagesRef.current = updated;
-        return updated;
-      });
-      // Auto-save after every AI response (outside the state updater)
-      setActiveConvId((currentId) => {
-        const savedId = saveConversation(messagesRef.current, currentId);
-        return savedId ?? currentId;
-      });
+      const withResponse = [...messagesRef.current, aiMsg];
+      messagesRef.current = withResponse;
+      setMessages(withResponse);
+
+      // Call saveConversation outside a state updater to avoid double-save
+      // under React Strict Mode
+      const savedId = saveConversation(withResponse, activeConvIdRef.current);
+      if (savedId) {
+        activeConvIdRef.current = savedId;
+        setActiveConvId(savedId);
+      }
     } catch (err) {
       const errMsg = createMessage('error', err.message);
-      setMessages((prev) => {
-        const updated = [...prev, errMsg];
-        messagesRef.current = updated;
-        return updated;
-      });
+      const withError = [...messagesRef.current, errMsg];
+      messagesRef.current = withError;
+      setMessages(withError);
+
+      // Save even on error so the user prompt is preserved in history
+      const savedId = saveConversation(withError, activeConvIdRef.current);
+      if (savedId) {
+        activeConvIdRef.current = savedId;
+        setActiveConvId(savedId);
+      }
     } finally {
       setIsLoading(false);
     }
   }, [saveConversation]);
 
-  /** Start a fresh chat (optionally saving the current one first). */
   const handleNewChat = useCallback(() => {
     setMessages([]);
+    messagesRef.current = [];
     setActiveConvId(null);
+    activeConvIdRef.current = null;
   }, []);
 
-  /** Clear current chat (same as new chat but triggered from the input). */
-  const handleClear = useCallback(() => {
+  const handleClearAll = useCallback(() => {
+    clearAll();
     setMessages([]);
+    messagesRef.current = [];
     setActiveConvId(null);
-  }, []);
+    activeConvIdRef.current = null;
+  }, [clearAll]);
 
-  /** Load a conversation from history. */
   const handleLoadConversation = useCallback((conv) => {
     setMessages(conv.messages);
     setActiveConvId(conv.id);
@@ -92,6 +99,7 @@ export default function App() {
         onLoad={handleLoadConversation}
         onDelete={deleteConversation}
         onNewChat={handleNewChat}
+        onClearAll={handleClearAll}
       />
 
       <Header
@@ -102,7 +110,7 @@ export default function App() {
       <main className="flex flex-1 flex-col overflow-hidden">
         <div className="flex flex-1 flex-col overflow-y-auto px-4 py-6 sm:px-8 max-w-3xl w-full mx-auto">
           {messages.length === 0 && !isLoading ? (
-            <EmptyState />
+            <EmptyState onSuggestion={handleSubmit} />
           ) : (
             <ChatHistory messages={messages} isLoading={isLoading} />
           )}
@@ -112,9 +120,7 @@ export default function App() {
           <div className="max-w-3xl mx-auto">
             <PromptInput
               onSubmit={handleSubmit}
-              onClear={handleClear}
               isLoading={isLoading}
-              hasHistory={messages.length > 0}
             />
             <p className="mt-2 text-center text-[11px] text-sn-muted">
               AI responses may be inaccurate. Always verify important travel information.

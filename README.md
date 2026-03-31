@@ -2,6 +2,8 @@
 
 A lightweight AI chat interface built with React and Vite. Users can ask travel-related questions and receive answers from OpenAI's GPT API, displayed in a real-time chat UI styled to match Spotnana's brand.
 
+![Spotnana Travel Assistant screenshot](src/assets/screenshot.png)
+
 ---
 
 ## Features

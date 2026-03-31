@@ -76,6 +76,19 @@ export default function App() {
     activeConvIdRef.current = null;
   }, []);
 
+  const handleDeleteConversation = useCallback((id) => {
+    deleteConversation(id);
+    // If the deleted conversation is the one currently open, reset to a new chat
+    // and close the history panel
+    if (id === activeConvIdRef.current) {
+      setMessages([]);
+      messagesRef.current = [];
+      setActiveConvId(null);
+      activeConvIdRef.current = null;
+      setIsHistoryOpen(false);
+    }
+  }, [deleteConversation]);
+
   const handleClearAll = useCallback(() => {
     clearAll();
     setMessages([]);
@@ -97,7 +110,7 @@ export default function App() {
         conversations={conversations}
         activeId={activeConvId}
         onLoad={handleLoadConversation}
-        onDelete={deleteConversation}
+        onDelete={handleDeleteConversation}
         onNewChat={handleNewChat}
         onClearAll={handleClearAll}
       />

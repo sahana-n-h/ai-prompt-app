@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+// Relaying requests through the Vite proxy (/openai → https://api.openai.com)
+// to avoid CORS issues on dev. In prod, point this to backend endpoint.
+const OPENAI_API_URL = '/openai/v1/chat/completions';
 
 export async function fetchAIResponse(prompt, apiKey) {
   if (!apiKey) {

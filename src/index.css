@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #F5F7FA;
+    color: #2D3748;
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, sans-serif;
+    margin: 0;
+  }
+  #root {
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #CBD5E0 transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #CBD5E0;
+    border-radius: 3px;
+  }
+  /* Spotnana brand: white header, red accent (#CB333B), dark text (#202020), light bg (#F0F3F5) */
+  .bg-sn-dark    { background-color: #18191B; }
+  .bg-sn-red     { background-color: #CB333B; }
+  .bg-sn-red-light { background-color: #FDECEA; }
+  .bg-sn-gray    { background-color: #F0F3F5; }
+  .text-sn-dark  { color: #202020; }
+  .text-sn-red   { color: #CB333B; }
+  .text-sn-muted { color: #717273; }
+  .border-sn-border { border-color: #E0E3E5; }
+  .border-sn-red { border-color: #CB333B; }
+  .hover-bg-sn-red-dark:hover { background-color: #A0282F; }
+  .ring-sn-red:focus-within { --tw-ring-color: #CB333B; }
+}
